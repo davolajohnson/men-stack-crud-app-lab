@@ -1,0 +1,23 @@
+<%- include('../layout') %>
+
+<h2>Edit Book</h2>
+
+<form action="/books/<%= book._id %>" method="POST">
+  <label>Title:</label><br>
+  <input type="text" name="title" value="<%= book.title %>" required><br>
+
+  <label>Author:</label><br>
+  <input type="text" name="author" value="<%= book.author %>" required><br>
+
+  <label>Description:</label><br>
+  <textarea name="description" rows="4"><%= book.description %></textarea><br>
+
+  <label>
+    <input type="checkbox" name="published" <%= book.published ? 'checked' : '' %> >
+    Published?
+  </label><br>
+
+  <button type="submit">Update Book</button>
+</form>
+
+<a href="/books">⬅ Back to list</a>
