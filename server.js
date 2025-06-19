@@ -1,8 +1,9 @@
 /********************  Config  ********************/
-require('dotenv').config();                // Load environment variables
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const Book = require('./models/book');     // Mongoose model
+const methodOverride = require('method-override');
+const Book = require('./models/book');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,11 +12,12 @@ const PORT = process.env.PORT || 3000;
 mongoose.connect(process.env.DATABASE_URL);
 const db = mongoose.connection;
 db.on('error', (err) => console.error('MongoDB connection error:', err));
-db.once('open', () => console.log('✅ Connected to MongoDB'));
+db.once('open', () => console.log('Connected to MongoDB'));
 
 /********************  Middleware  *****************************/
 app.use(express.urlencoded({ extended: true }));
-app.set('view engine', 'ejs');                  // EJS as view engine
+app.use(methodOverride('_method'));
+app.set('view engine', 'ejs');
 
 /********************  Routes  *********************************/
 
@@ -60,8 +62,8 @@ app.get('/books/:id/edit', async (req, res) => {
   }
 });
 
-// Update: Handle form submission to update a book
-app.post('/books/:id', async (req, res) => {
+// Update: Handle PUT request to update a book
+app.put('/books/:id', async (req, res) => {
   try {
     req.body.published = req.body.published === 'on';
     await Book.findByIdAndUpdate(req.params.id, req.body);
@@ -71,8 +73,8 @@ app.post('/books/:id', async (req, res) => {
   }
 });
 
-// Delete: Remove a book
-app.post('/books/:id/delete', async (req, res) => {
+// Delete: Handle DELETE request to remove a book
+app.delete('/books/:id', async (req, res) => {
   try {
     await Book.findByIdAndDelete(req.params.id);
     res.redirect('/books');
@@ -83,3 +85,4 @@ app.post('/books/:id/delete', async (req, res) => {
 
 /********************  Start Server  ***************************/
 app.listen(PORT, () => console.log(`🚀 Server listening on port ${PORT}`));
+
